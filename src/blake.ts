@@ -38,7 +38,7 @@ const blake2s: BlakeOptions = {
 // the function as async because it must return a Promise to match the API
 // for other functions that do perform asynchronous work (see sha.browser.js)
 // eslint-disable-next-line
-const makeB2Hash = (size: number, hf: BlakeOptions) => async (data: any): Promise<Buffer> => {
+const makeB2Hash = (size: number, hf: BlakeOptions) => async (data: Uint8Array): Promise<Buffer> => {
   const ctx = hf.init(size, null)
   hf.update(ctx, data)
   return Buffer.from(hf.digest(ctx))
