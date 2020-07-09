@@ -3,7 +3,7 @@ import { errcode } from 'err-code'
 import multihash from 'multihashes'
 import * as crypto from './crypto'
 
-type MultihashingAlgo = keyof typeof multihashing.functions | 'identity' | 'sha1' | 'sha2-256' | 'sha2-512' | 'sha3-512' | 'sha3-384' | 'sha3-256' | 'sha3-224' | 'shake-128' | 'shake-256' | 'keccak-224' | 'keccak-224' | 'keccak-256' | 'keccak-384' | 'keccak-512' | 'murmur3-128' | 'murmur3-32' | 'sha2-256'
+type MultihashingAlgo = keyof typeof Multihashing.functions | 'identity' | 'sha1' | 'sha2-256' | 'sha2-512' | 'sha3-512' | 'sha3-384' | 'sha3-256' | 'sha3-224' | 'shake-128' | 'shake-256' | 'keccak-224' | 'keccak-224' | 'keccak-256' | 'keccak-384' | 'keccak-512' | 'murmur3-128' | 'murmur3-32' | 'sha2-256'
 
 /**
  * Hash the given `buf` using the algorithm specified by `alg`.
@@ -12,8 +12,8 @@ type MultihashingAlgo = keyof typeof multihashing.functions | 'identity' | 'sha1
  * @param {number} [length] - Optionally trim the result to this length.
  * @returns {Promise<Buffer>}
  */
-async function multihashing (buf: Buffer, alg: MultihashingAlgo, length?: number): Promise<Buffer> {
-  const digest = length ? await multihashing.digest(buf, alg, length) : await multihashing.digest(buf, alg)
+async function Multihashing (buf: Buffer, alg: MultihashingAlgo, length?: number): Promise<Buffer> {
+  const digest = length ? await Multihashing.digest(buf, alg, length) : await Multihashing.digest(buf, alg)
   return multihash.encode(digest, alg, length)
 }
 
@@ -22,12 +22,12 @@ async function multihashing (buf: Buffer, alg: MultihashingAlgo, length?: number
  *
  * @type {Buffer}
  */
-multihashing.Buffer = Buffer // for browser things
+Multihashing.Buffer = Buffer // for browser things
 
 /**
  * Expose multihash itself, to avoid silly double requires.
  */
-multihashing.multihash = multihash
+Multihashing.multihash = multihash
 
 /**
  * @param {Buffer} buf - The value to hash.
@@ -35,8 +35,8 @@ multihashing.multihash = multihash
  * @param {number} [length] - Optionally trim the result to this length.
  * @returns {Promise<Buffer>}
  */
-multihashing.digest = async (buf: Buffer, alg: MultihashingAlgo, length?: number): Promise<Buffer> => {
-  const hash = multihashing.createHash(alg)
+Multihashing.digest = async (buf: Buffer, alg: MultihashingAlgo, length?: number): Promise<Buffer> => {
+  const hash = Multihashing.createHash(alg)
   const digest = await hash(buf)
   return length ? digest.slice(0, length) : digest
 }
@@ -48,24 +48,24 @@ multihashing.digest = async (buf: Buffer, alg: MultihashingAlgo, length?: number
  *
  * @returns {function} - The hash function corresponding to `alg`
  */
-multihashing.createHash = function (alg: MultihashingAlgo): (...args: any[]) => Promise<Buffer> | Buffer {
+Multihashing.createHash = function (alg: MultihashingAlgo): (...args: any[]) => Promise<Buffer> | Buffer {
   if (!alg) {
     throw errcode(new Error('hash algorithm must be specified'), 'ERR_HASH_ALGORITHM_NOT_SPECIFIED')
   }
 
   alg = multihash.coerceCode(alg)
-  if (!multihashing.functions[alg]) {
+  if (!Multihashing.functions[alg]) {
     throw errcode(new Error(`multihash function '${alg}' not yet supported`), 'ERR_HASH_ALGORITHM_NOT_SUPPORTED')
   }
 
-  return multihashing.functions[alg]
+  return Multihashing.functions[alg]
 }
 
 /**
  * Mapping of multihash codes to their hashing functions.
  * @type {Object}
  */
-multihashing.functions = {
+Multihashing.functions = {
   // identity
   0x00: crypto.identity,
   // sha1
@@ -104,12 +104,12 @@ multihashing.functions = {
 
 // add blake functions
 // @ts-ignore
-crypto.addBlake(multihashing.functions)
+// crypto.addBlake(multihashing.functions)
 
-multihashing.validate = async (buf: Buffer, hash: Uint8Array): Promise<boolean> => {
-  const newHash = await multihashing(buf, multihash.decode(hash).name)
+Multihashing.validate = async (buf: Buffer, hash: Uint8Array): Promise<boolean> => {
+  const newHash = await Multihashing(buf, multihash.decode(hash).name)
 
   return Buffer.compare(hash, newHash) === 0
 }
 
-export default multihashing
+export default Multihashing
