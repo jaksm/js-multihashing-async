@@ -6,8 +6,8 @@ import multihash from 'multihashes'
 // the function as async because it must return a Promise to match the API
 // for other functions that do perform asynchronous work (see sha.browser.js)
 // eslint-disable-next-line
-type Algorithm = 'sha1' | 'sha2-256' | 'sha2-512' | 'dbl-sha2-256'
-export const digest = async (data: BinaryLike, alg: Algorithm) => {
+type DigestAlgorithm = 'sha1' | 'sha2-256' | 'sha2-512' | 'dbl-sha2-256'
+export const digest = async (data: BinaryLike, alg: DigestAlgorithm) => {
   switch (alg) {
     case 'sha1':
       return crypto.createHash('sha1').update(data).digest()
@@ -24,11 +24,11 @@ export const digest = async (data: BinaryLike, alg: Algorithm) => {
   }
 }
 
-export const factory = (alg: Algorithm) => async (data: BinaryLike) => {
+export const factory = (alg: DigestAlgorithm) => async (data: BinaryLike) => {
   return digest(data, alg)
 }
 
-export const multihashing = async(buf: Buffer, alg: Algorithm, length: number) => {
+export const multihashing = async(buf: Buffer, alg: DigestAlgorithm, length: number) => {
     const h = await digest(buf, alg) // arg length was probably a typo
     return multihash.encode(h, alg, length) 
 }
