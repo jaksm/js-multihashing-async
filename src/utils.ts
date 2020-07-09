@@ -1,8 +1,6 @@
-'use strict'
+import { Buffer } from 'buffer'
 
-const { Buffer } = require('buffer')
-
-const fromNumberTo32BitBuf = (number) => {
+export const fromNumberTo32BitBuf = (number: number): Buffer => {
   const bytes = new Array(4)
 
   for (let i = 0; i < 4; i++) {
@@ -11,8 +9,4 @@ const fromNumberTo32BitBuf = (number) => {
   }
 
   return Buffer.from(bytes)
-}
-
-module.exports = {
-  fromNumberTo32BitBuf
 }
