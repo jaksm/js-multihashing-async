@@ -59,4 +59,3 @@ export const keccak384 = hash('keccak-384')
 export const keccak512 = hash('keccak-512')
 export const murmur3128 = hash('murmur3-128')
 export const murmur332 = hash('murmur3-32')
-export { default as addBlake } from './blake'

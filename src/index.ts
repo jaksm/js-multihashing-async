@@ -1,9 +1,9 @@
-'use strict'
+import { Buffer } from 'buffer'
+import { errcode } from 'err-code'
+import multihash from 'multihashes'
+import * as crypto from './crypto'
 
-const { Buffer } = require('buffer')
-const errcode = require('err-code')
-const multihash = require('multihashes')
-const crypto = require('./crypto')
+type MultihashingAlgo = 0x00 | 0x11 | 0x12 | 0x13 | 0x14 | 0x15 | 0x16 | 0x17 | 0x18 | 0x19 | 0x1A | 0x1B | 0x1C | 0x1D | 0x22 | 0x23 | 0x56
 
 /**
  * Hash the given `buf` using the algorithm specified by `alg`.
@@ -12,8 +12,8 @@ const crypto = require('./crypto')
  * @param {number} [length] - Optionally trim the result to this length.
  * @returns {Promise<Buffer>}
  */
-async function Multihashing (buf, alg, length) {
-  const digest = await Multihashing.digest(buf, alg, length)
+async function Multihashing (buf: Buffer, alg: MultihashingAlgo | string, length?: number): Promise<Buffer> {
+  const digest = length ? await Multihashing.digest(buf, alg, length) : await Multihashing.digest(buf, alg)
   return multihash.encode(digest, alg, length)
 }
 
@@ -35,7 +35,7 @@ Multihashing.multihash = multihash
  * @param {number} [length] - Optionally trim the result to this length.
  * @returns {Promise<Buffer>}
  */
-Multihashing.digest = async (buf, alg, length) => {
+Multihashing.digest = async (buf: Buffer, alg: MultihashingAlgo | string, length?: number): Promise<Buffer> => {
   const hash = Multihashing.createHash(alg)
   const digest = await hash(buf)
   return length ? digest.slice(0, length) : digest
@@ -48,7 +48,7 @@ Multihashing.digest = async (buf, alg, length) => {
  *
  * @returns {function} - The hash function corresponding to `alg`
  */
-Multihashing.createHash = function (alg) {
+Multihashing.createHash = function (alg: MultihashingAlgo | string): (...args: any[]) => Promise<Buffer> | Buffer {
   if (!alg) {
     throw errcode(new Error('hash algorithm must be specified'), 'ERR_HASH_ALGORITHM_NOT_SPECIFIED')
   }
@@ -103,12 +103,13 @@ Multihashing.functions = {
 }
 
 // add blake functions
+// @ts-ignore
 crypto.addBlake(Multihashing.functions)
 
-Multihashing.validate = async (buf, hash) => {
+Multihashing.validate = async (buf: Buffer, hash: Uint8Array): Promise<boolean> => {
   const newHash = await Multihashing(buf, multihash.decode(hash).name)
 
   return Buffer.compare(hash, newHash) === 0
 }
 
-module.exports = Multihashing
+export default Multihashing
