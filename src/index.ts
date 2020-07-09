@@ -3,7 +3,7 @@ import { errcode } from 'err-code'
 import multihash from 'multihashes'
 import * as crypto from './crypto'
 
-type MultihashingAlgo = keyof typeof Multihashing.functions | 'identity' | 'sha1' | 'sha2-256' | 'sha2-512' | 'sha3-512' | 'sha3-384' | 'sha3-256' | 'sha3-224' | 'shake-128' | 'shake-256' | 'keccak-224' | 'keccak-224' | 'keccak-256' | 'keccak-384' | 'keccak-512' | 'murmur3-128' | 'murmur3-32' | 'sha2-256'
+export type MultihashingAlgo = keyof typeof Multihashing.functions | 'identity' | 'sha1' | 'sha2-256' | 'sha2-512' | 'sha3-512' | 'sha3-384' | 'sha3-256' | 'sha3-224' | 'shake-128' | 'shake-256' | 'keccak-224' | 'keccak-224' | 'keccak-256' | 'keccak-384' | 'keccak-512' | 'murmur3-128' | 'murmur3-32' | 'sha2-256'
 
 /**
  * Hash the given `buf` using the algorithm specified by `alg`.
