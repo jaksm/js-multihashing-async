@@ -1,10 +1,8 @@
-'use strict'
-
-const { Buffer } = require('buffer')
-const sha3 = require('js-sha3')
-const mur = require('murmurhash3js-revisited')
-const { factory: sha } = require('./sha')
-const { fromNumberTo32BitBuf } = require('./utils')
+import { Buffer } from 'buffer'
+import sha3 from 'js-sha3'
+import mur from 'murmurhash3js-revisited'
+import { factory as sha } from './sha'
+import { fromNumberTo32BitBuf } from './utils'
 
 // Note that although this function doesn't do any asynchronous work, we mark
 // the function as async because it must return a Promise to match the API
